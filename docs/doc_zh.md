@@ -12,6 +12,9 @@
 ##### [TypeString](#TypeString)
 ##### [TypeStringDelayed](#TypeStrDelay) (相当于 TypeStrDelay, 废弃 API)
 ##### [TypeStrDelay](#TypeStrDelay)
+##### [TypeStr](#TypeStr)
+##### [WriteAll](#WriteAll)
+##### [ReadAll](#ReadAll)
 
 ## [鼠标](#Mouse)
 
@@ -49,6 +52,10 @@
 ##### [TostringBitmap](#TostringBitmap)
 ##### [GetPortion](#GetPortion)
 ##### [Convert](#Convert)
+#### [FreeBitmap](#FreeBitmap)
+#### [ReadBitmap](#ReadBitmap)
+#### [CopyBitpb](#CopyBitpb)
+#### [DeepCopyBit](#DeepCopyBit)
 
 ## [事件](#Event)
 
@@ -69,6 +76,13 @@
 ##### [GetBHandle](#GetHandle)
 ##### [GetTitle](#GetTitle)
 ##### [GetPID](#GetPID)
+##### [Pids](#Pids)
+##### [PidExists](#PidExists)
+##### [Process](#Process)
+##### [FindName](#FindName)
+##### [FindNames](#FindNames)
+##### [FindIds](#FindIds)
+#### [ActivePID](#ActivePID)
 
 
 ## <h2 id="Keyboard">键盘</h2>
@@ -130,11 +144,29 @@ modifier (optional, string or array) - Accepts alt, command (mac), control, and 
     string - The string to send.
     cpm - Characters per minute.
 
+### <h3 id="TypeStr">.TypeStr(string)</h3>
 
+#### 参数:
+
+    string - The string to send.
+
+### <h3 id="WriteAll">.WriteAll(text string)</h3>
+
+#### 参数:
+    text string
+#### 返回值:      
+
+### <h3 id="ReadAll">.ReadAll()</h3>
+
+#### 参数:
+
+#### 返回值: 
+    text,
+    error 
 
 ## <h2 id="Mouse">鼠标</h2>
 ### <h3 id="SetMouseDelay">.SetMouseDelay(ms)</h3>
-    设置鼠标延迟 (在一个鼠标事件后),单位 ms, 默认值 10 ms
+    设置鼠标延迟 (在一个鼠标事件后), 单位 ms, 默认值 10 ms
 
     Sets the delay in milliseconds to sleep after a mouse event. This is 10ms by default.
 
@@ -171,8 +203,8 @@ robotgo.MoveMouse(100, 100)
 #### 示例:
 
 ```Go
-    robotgo.MoveMouseSmooth(100, 200)
-	robotgo.MoveMouseSmooth(100, 200, 1.0, 100.0)
+robotgo.MoveMouseSmooth(100, 200)
+robotgo.MoveMouseSmooth(100, 200, 1.0, 100.0)
 ```       
 
 ### <h3 id="MouseClick">.MouseClick(button, double)</h3>
@@ -188,8 +220,8 @@ robotgo.MoveMouse(100, 100)
 #### 示例:
 
 ```Go
-    robogo.MouseClick()
-    robogo.MouseClick("left", true)
+robogo.MouseClick()
+robogo.MouseClick("left", true)
 ```
 
 ### <h3 id="MoveClick">.MoveClick(x, y, button, double)</h3>
@@ -287,7 +319,8 @@ robotgo.ScrollMouse(50, "down")
 ### <h3 id="GetPixelColor">.GetPixelColor(x, y)
     获取坐标为 x, y 位置处的颜色
 
-    Gets the pixel color at x, y. This function is perfect for getting a pixel or two, but if you'll be reading large portions of the screen use screen.capture.
+    Gets the pixel color at x, y. This function is perfect for getting a pixel or two,  
+    but if you'll be reading large portions of the screen use screen.capture.
 
 #### 参数:
 
@@ -311,8 +344,8 @@ robotgo.ScrollMouse(50, "down")
     获取部分或者全部屏幕
     Gets part or all of the screen.
 
-    BCaptureScreen Returns a go struct
-    Capture_Screen (Drop support)
+    GoCaptureScreen Returns a go struct
+    Capture_Screen (废弃)
 
 #### 参数:
 
@@ -320,7 +353,7 @@ robotgo.ScrollMouse(50, "down")
     y (optional)
     height (optional)
     width (optional)
-    If no arguments are provided, screen.capture will get the full screen.
+    If no arguments are provided, capturescreen(screencapture) will get the full screen.
 
 #### 返回值:
 
@@ -397,7 +430,7 @@ robotgo.ScrollMouse(50, "down")
 
     Returns new bitmap object created from a portion of another    
 
-### <h3 id="Convert">.Convert(openpath, savepath,MMImageType)</h3>
+### <h3 id="Convert">.Convert(openpath, savepath, MMImageType)</h3>
 
     转换 bitmap 图片格式
 
@@ -412,7 +445,78 @@ robotgo.ScrollMouse(50, "down")
 ```Go
 robotgo.Convert("test.png", "test.tif")
 ```  
-##<h2 id="Event">事件</h2> 
+
+### <h3 id="FreeBitmap">.FreeBitmap(MMBitmapRef)</h3>
+
+    FreeBitmap free and dealloc bitmap
+
+#### 参数:
+
+    MMBitmapRef
+
+#### 示例:
+
+```Go
+robotgo.FreeBitmap(bitmap)
+```    
+
+
+### <h3 id="ReadBitmap">.ReadBitmap(MMBitmapRef)</h3>
+
+    ReadBitmap returns false and sets error if |bitmap| is NULL
+
+#### 参数:
+
+    MMBitmapRef
+
+#### 返回值:
+
+    bool
+    
+#### 示例:
+
+```Go
+robotgo.ReadBitmap(bitmap)
+```    
+
+
+### <h3 id="CopyBitpb">.CopyBitpb(MMBitmapRef)</h3>
+
+   CopyBitpb copy bitmap to pasteboard
+
+#### 参数:
+
+    MMBitmapRef
+
+#### 返回值:
+
+    bool
+
+#### 示例:
+
+```Go
+robotgo.CopyBitpb(bitmap)
+```    
+
+### <h3 id="DeepCopyBit">.DeepCopyBit(MMBitmapRef)</h3>
+
+   DeepCopyBit deep copy bitmap
+
+#### 参数:
+
+    MMBitmapRef
+
+#### 返回值:
+
+    MMBitmapRef
+
+#### 示例:
+
+```Go
+robotgo.DeepCopyBit(bitmap)
+```  
+
+## <h2 id="Event">事件</h2> 
 
 ### <h3 id="AddEvent">.AddEvent(string)</h3>
 
@@ -441,12 +545,12 @@ import (
 
 func main() {
   keve := robotgo.AddEvent("k")
-  if keve == 0 {
+  if keve {
     fmt.Println("you press...", "k")
   }
 
   mleft := robotgo.AddEvent("mleft")
-  if mleft == 0 {
+  if mleft {
     fmt.Println("you press...", "mouse left button")
   }
 } 
@@ -457,7 +561,7 @@ func main() {
 
 ## <h2 id="Window">窗口</h2> 
 
-### <h3 id="ShowAlert">.ShowAlert(title, msg,defaultButton,cancelButton string)</h3>
+### <h3 id="ShowAlert">.ShowAlert(title, msg, defaultButton, cancelButton string)</h3>
 
     Displays alert with the given attributes. If cancelButton is not given, only the defaultButton is displayed
 
@@ -471,7 +575,7 @@ func main() {
 
 #### 返回值:
 
-   Returns 0 (True) if the default button was pressed, or 1 (False) if cancelled.
+    Returns 0 (True) if the default button was pressed, or 1 (False) if cancelled.
    
 ### <h3 id="CloseWindow">.CloseWindow()</h3>
 
@@ -485,7 +589,7 @@ func main() {
 
 ### <h3 id="IsValid">.IsValid()</h3>
 
-   Valid the Window
+    Valid the Window
 
 #### 参数:
     无      
@@ -496,7 +600,7 @@ func main() {
 
 ### <h3 id="SetActive">.SetActive()</h3>
 
-   设为当前窗口
+    设为当前窗口
 
 #### 参数:
     hwnd  
@@ -507,7 +611,7 @@ func main() {
 
 ### <h3 id="GetActive">.GetActive()</h3>
 
-   获取当前窗口
+    获取当前窗口
 
 #### 参数:
     无       
@@ -517,7 +621,7 @@ func main() {
 
 ### <h3 id="SetHandle">.SetHandle()</h3>
 
-   Set the Window Handle
+    Set the Window Handle
 
 #### 参数:
     int 
@@ -527,7 +631,7 @@ func main() {
 
 ### <h3 id="GetHandle">.GetHandle()</h3>
 
-   获取窗口 Handle
+    获取窗口 Handle
 
 #### 参数:
     无    
@@ -537,7 +641,7 @@ func main() {
 
 ### <h3 id="GetTitle">.GetTitle()</h3>
 
-   获取窗口标题
+    获取窗口标题
 
 #### 参数:
            
@@ -547,10 +651,80 @@ func main() {
 
 ### <h3 id="GetPID">.GetPID()</h3>
 
-   获取进程 id
+    获取进程 id
 
 #### 参数:
     无   
 
 #### 返回值:
-    返回进程 id        
+    返回进程 id    
+
+### <h3 id="Pids">.Pids()</h3>
+
+    获取所有进程 id
+
+#### 参数:
+    无   
+
+#### 返回值:
+    返回进程 id   
+
+### <h3 id="PidExists">.PidExists()</h3>
+
+    判断进程 id 是否存在
+
+#### 参数:
+    pid  
+
+#### 返回值:
+    返回 bool 
+
+### <h3 id="Process">.Process()</h3>
+
+  Process get the all process struct
+
+#### 参数:
+    无  
+
+#### 返回值:
+    Returns []Nps, error
+
+### <h3 id="FindName">.FindName()</h3>
+
+    FindName find the process name by the process id
+
+#### 参数:
+    pid  
+
+#### 返回值:
+    Returns string, error 
+
+### <h3 id="FindNames">.FindNames()</h3>
+
+    FindNames find the all process name
+
+#### Arguments:
+    none  
+
+#### Return:
+    Returns []string, error  
+
+### <h3 id="FindIds">.FindIds()</h3>
+
+    FindIds find the process id by the process name
+
+#### Arguments:
+    name string  
+
+#### Return:
+    Returns []int32, error  
+
+### <h3 id="ActivePID">.ActivePID()</h3>
+
+    ActivePID window active by PID
+
+#### Arguments:
+    pid int32 
+
+#### Return:
+    none                        

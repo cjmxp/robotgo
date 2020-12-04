@@ -1,4 +1,4 @@
-// Copyright 2016-2017 The go-vgo Project Developers. See the COPYRIGHT
+// Copyright 2016 The go-vgo Project Developers. See the COPYRIGHT
 // file at the top-level directory of this distribution and at
 // https://github.com/go-vgo/robotgo/blob/master/LICENSE
 //
@@ -12,13 +12,14 @@ package main
 
 import (
 	"fmt"
+	"reflect"
 
 	"github.com/go-vgo/robotgo"
 )
 
 func aRobotgo() {
 	abool := robotgo.ShowAlert("test", "robotgo")
-	if abool == 0 {
+	if abool {
 		fmt.Println("ok@@@", "ok")
 	}
 
@@ -57,6 +58,11 @@ func aRobotgo() {
 	fmt.Println("FindBitmap------", fx, fy)
 
 	robotgo.SaveBitmap(bitmap, "test.png", 1)
+
+	var bitmapTest robotgo.Bitmap
+	bitTest := robotgo.OpenBitmap("test.png")
+	bitmapTest = robotgo.ToBitmap(bitTest)
+	fmt.Println("...type", reflect.TypeOf(bitTest), reflect.TypeOf(bitmapTest))
 
 	// robotgo.MouseClick()
 	robotgo.ScrollMouse(10, "up")

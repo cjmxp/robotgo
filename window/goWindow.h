@@ -1,4 +1,4 @@
-// Copyright 2016-2017 The go-vgo Project Developers. See the COPYRIGHT
+// Copyright 2016 The go-vgo Project Developers. See the COPYRIGHT
 // file at the top-level directory of this distribution and at
 // https://github.com/go-vgo/robotgo/blob/master/LICENSE
 //
@@ -10,40 +10,83 @@
 
 #include "alert_c.h"
 #include "window.h"
+#include "win_sys.h"
 
-int aShowAlert(const char *title, const char *msg, const char *defaultButton,
-              const char *cancelButton){
-	int alert=showAlert(title,msg,defaultButton,cancelButton);
-
+int show_alert(const char *title, const char *msg,
+	const char *defaultButton, const char *cancelButton){
+		
+	int alert = showAlert(title, msg, defaultButton, cancelButton);
 	return alert;
 }
 
-bool aIsValid(){
-	bool abool=IsValid();
+intptr scale_x(){
+	return scaleX();
+}
+
+intptr scale_y(){
+	return scaleY();
+}
+
+bool is_valid(){
+	bool abool = IsValid();
 	return abool;
 }
 
-// int aFindwindow(char* name){
-// 	int z=findwindow(name);
+// int find_window(char* name){
+// 	int z = findwindow(name);
 // 	return z;
 // }
 
-void aCloseWindow(void){
-	CloseWin();
+void min_window(uintptr pid, bool state, uintptr isHwnd){
+	#if defined(IS_MACOSX)
+		// return 0;
+		AXUIElementRef axID = AXUIElementCreateApplication(pid);
+		
+		AXUIElementSetAttributeValue(axID, kAXMinimizedAttribute,
+		state ? kCFBooleanTrue : kCFBooleanFalse);
+	#elif defined(USE_X11)
+		// Ignore X errors
+		XDismissErrors();
+		// SetState((Window)pid, STATE_MINIMIZE, state);
+	#elif defined(IS_WINDOWS)
+		if (isHwnd == 0) {
+			HWND hwnd = GetHwndByPId(pid);
+			win_min(hwnd, state);
+		} else {
+			win_min((HWND)pid, state);
+		}
+	#endif
 }
 
-bool aSetHandle (uintptr handle){
-	bool hwnd=setHandle(handle);
+void max_window(uintptr pid, bool state, uintptr isHwnd){
+	#if defined(IS_MACOSX)
+		// return 0;
+	#elif defined(USE_X11)
+		XDismissErrors();
+		// SetState((Window)pid, STATE_MINIMIZE, false);
+		// SetState((Window)pid, STATE_MAXIMIZE, state);
+	#elif defined(IS_WINDOWS)
+		if (isHwnd == 0) {
+			HWND hwnd = GetHwndByPId(pid);
+			win_max(hwnd, state);
+		} else {
+			win_max((HWND)pid, state);
+		}
+	#endif
+}
+
+void close_window(uintptr pid, uintptr isHwnd){
+	close_window_by_PId(pid, isHwnd);
+}
+
+bool set_handle(uintptr handle){
+	bool hwnd = setHandle(handle);
 	return hwnd;
 }
 
-uintptr aGetHandle(){
-	uintptr hwnd=getHandle();
-	return hwnd;
-}
+uintptr get_handle(){
+	MData mData = GetActive();
 
-uintptr bGetHandle(){
-	MData mData=GetActive();
 	#if defined(IS_MACOSX)
 		return (uintptr)mData.CgID;
 	#elif defined(USE_X11)
@@ -53,22 +96,32 @@ uintptr bGetHandle(){
 	#endif
 }
 
-void aSetActive(const MData win){
+uintptr bget_handle(){
+	uintptr hwnd = getHandle();
+	return hwnd;
+}
+
+void set_active(const MData win){
 	SetActive(win);
 }
 
-MData aGetActive(){
-	MData mdata=GetActive();
+void active_PID(uintptr pid, uintptr isHwnd){
+	MData win = set_handle_pid(pid, isHwnd);
+	SetActive(win);
+}
+
+MData get_active(){
+	MData mdata = GetActive();
 	return mdata;
 }
 
-char* aGetTitle(){
-	char* title=GetTitle();
-	// printf("title::::%s\n",title );
+char* get_title(uintptr pid, uintptr isHwnd){
+	char* title = get_title_by_pid(pid, isHwnd);
+	// printf("title::::%s\n", title );
 	return title;
 }
 
-int32 aGetPID(void){
-	int pid=WGetPID();
+int32 get_PID(void){
+	int pid = WGetPID();
 	return pid;
 }
